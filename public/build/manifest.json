@@ -1,0 +1,68 @@
+{
+  "_utils-BBV27l9H.js": {
+    "file": "assets/utils-BBV27l9H.js",
+    "name": "utils"
+  },
+  "node_modules/lottie-web/build/player/lottie.js": {
+    "file": "assets/lottie-DQdZhxjq.js",
+    "name": "lottie",
+    "src": "node_modules/lottie-web/build/player/lottie.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/chatbot.js"
+    ]
+  },
+  "node_modules/swiper/modules/index.mjs": {
+    "file": "assets/modules-_i6O0KL_.js",
+    "name": "modules",
+    "src": "node_modules/swiper/modules/index.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_utils-BBV27l9H.js"
+    ]
+  },
+  "node_modules/swiper/swiper.mjs": {
+    "file": "assets/swiper-CHvvUpOK.js",
+    "name": "swiper",
+    "src": "node_modules/swiper/swiper.mjs",
+    "isDynamicEntry": true,
+    "imports": [
+      "_utils-BBV27l9H.js"
+    ]
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-C57x-ITQ.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-D5i8FaPt.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/chatbot.js",
+      "node_modules/swiper/swiper.mjs",
+      "node_modules/swiper/modules/index.mjs"
+    ],
+    "css": [
+      "assets/app-DEK6Zg2i.css"
+    ]
+  },
+  "resources/js/chatbot.js": {
+    "file": "assets/chatbot-BhiV1XQ5.js",
+    "name": "chatbot",
+    "src": "resources/js/chatbot.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.js"
+    ],
+    "dynamicImports": [
+      "node_modules/lottie-web/build/player/lottie.js"
+    ]
+  }
+}
