@@ -89,12 +89,14 @@ class AiSettingController extends Controller
 
         $this->saveSettings($request, [
             'ai_openai_base_url',
-            'ai_openai_api_key',
             'ai_openai_model',
             'ai_web_search_enabled',
         ]);
 
-        Setting::where('key', 'ai_openai_api_key')->update(['value' => $validated['ai_openai_api_key']]);
+        Setting::updateOrCreate(
+            ['key' => 'ai_openai_api_key'],
+            ['value' => $validated['ai_openai_api_key']],
+        );
 
         return back()->with('success', 'API connection settings saved successfully.');
     }
