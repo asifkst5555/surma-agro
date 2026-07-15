@@ -91,42 +91,51 @@ Route::get('/robots.txt', function () {
 
 Route::get('/debug/ai', function () {
     $results = [];
-
-    // 1. Check DB settings
     $results['api_key_in_db'] = \App\Models\Setting::getValue('ai_openai_api_key', 'NOT FOUND');
     $results['base_url'] = \App\Models\Setting::getValue('ai_openai_base_url', 'NOT FOUND');
     $results['model'] = \App\Models\Setting::getValue('ai_openai_model', 'NOT FOUND');
+    $isGemini = str_contains($results['base_url'], 'generativelanguage.googleapis.com');
+    $results['detected_api'] = $isGemini ? 'gemini' : 'openai-compatible';
 
-    // 2. Check PHP environment
     $results['curl_enabled'] = function_exists('curl_version');
     $results['curl_version'] = $results['curl_enabled'] ? curl_version()['version'] : 'N/A';
     $results['php_version'] = phpversion();
-    $results['allow_url_fopen'] = ini_get('allow_url_fopen');
     $results['disabled_functions'] = ini_get('disable_functions');
 
-    // 3. DNS check
-    $host = parse_url($results['base_url'], PHP_URL_HOST) ?: 'api.groq.com';
+    $host = parse_url($results['base_url'], PHP_URL_HOST) ?: 'unknown';
     $dns = dns_get_record($host, DNS_A) ?: [];
     $results['dns_records'] = array_map(fn($r) => $r['ip'] ?? '?', $dns);
 
-    // 4. Test cURL connection to Groq
     if ($results['curl_enabled']) {
-        $apiKey = \App\Models\Setting::getValue('ai_openai_api_key', '');
-        $ch = curl_init("{$results['base_url']}/chat/completions");
+        $apiKey = $results['api_key_in_db'];
+        $model = $results['model'];
+
+        if ($isGemini) {
+            $url = "{$results['base_url']}/models/{$model}:generateContent";
+            $headers = ['x-goog-api-key: ' . $apiKey, 'Content-Type: application/json'];
+            $body = json_encode([
+                'contents' => [['role' => 'user', 'parts' => [['text' => 'Say "OK" and nothing else.']]]],
+                'generationConfig' => ['maxOutputTokens' => 10, 'temperature' => 0.7],
+            ]);
+        } else {
+            $url = "{$results['base_url']}/chat/completions";
+            $headers = ['Authorization: Bearer ' . $apiKey, 'Content-Type: application/json'];
+            $body = json_encode([
+                'model' => $model,
+                'messages' => [['role' => 'user', 'content' => 'Say "OK" and nothing else.']],
+                'max_tokens' => 10,
+            ]);
+        }
+
+        $results['test_url'] = $url;
+        $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 15,
             CURLOPT_CONNECTTIMEOUT => 5,
-            CURLOPT_HTTPHEADER => [
-                'Authorization: Bearer ' . $apiKey,
-                'Content-Type: application/json',
-            ],
+            CURLOPT_HTTPHEADER => $headers,
             CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => json_encode([
-                'model' => $results['model'],
-                'messages' => [['role' => 'user', 'content' => 'Say "OK" and nothing else.']],
-                'max_tokens' => 10,
-            ]),
+            CURLOPT_POSTFIELDS => $body,
         ]);
         $output = curl_exec($ch);
         $curlError = curl_error($ch);
@@ -138,9 +147,6 @@ Route::get('/debug/ai', function () {
     } else {
         $results['curl_error'] = 'cURL is DISABLED on this server';
     }
-
-    // 5. Test Laravel Http facade (same method the chatbot uses)
-    $results['laravel_http_test'] = 'SKIPPED (run separate)';
 
     return response()->json($results, 200, ['Content-Type' => 'application/json']);
 })->name('debug.ai');

@@ -55,6 +55,8 @@ class WebsiteAssistantService
         $customPrompt = Setting::getValue('ai_assistant_system_prompt', '');
         $uncertainty = Setting::getValue('ai_uncertainty_handling', 'say_uncertain');
 
+        $isGemini = str_contains($baseUrl, 'generativelanguage.googleapis.com');
+
         $toneInstructions = [
             'professional' => 'Use a professional, calm, and trustworthy tone.',
             'friendly' => 'Use a warm, approachable, and conversational tone.',
@@ -88,27 +90,66 @@ class WebsiteAssistantService
             ->values()
             ->toArray();
 
-        $messages = array_merge(
-            [['role' => 'system', 'content' => $systemPrompt]],
-            $history,
-            [['role' => 'user', 'content' => $message]]
-        );
+        if ($isGemini) {
+            $geminiContents = [];
+            foreach ($history as $h) {
+                $geminiContents[] = [
+                    'role' => $h['role'] === 'assistant' ? 'model' : $h['role'],
+                    'parts' => [['text' => $h['content']]],
+                ];
+            }
+            $geminiContents[] = [
+                'role' => 'user',
+                'parts' => [['text' => $message]],
+            ];
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $apiKey,
-            'Content-Type' => 'application/json',
-        ])->timeout(30)->post("{$baseUrl}/chat/completions", [
-            'model' => $model,
-            'messages' => $messages,
-            'max_tokens' => min($maxLength * 2, 2000),
-            'temperature' => 0.7,
-        ]);
+            $body = [
+                'contents' => $geminiContents,
+                'generationConfig' => [
+                    'maxOutputTokens' => min($maxLength * 2, 2000),
+                    'temperature' => 0.7,
+                ],
+            ];
 
-        if ($response->successful()) {
-            $data = $response->json();
-            $content = $data['choices'][0]['message']['content'] ?? null;
-            if ($content) {
-                return $this->stripReasoning(trim($content));
+            if (filled($systemPrompt)) {
+                $body['system_instruction'] = ['parts' => [['text' => $systemPrompt]]];
+            }
+
+            $response = Http::withHeaders([
+                'x-goog-api-key' => $apiKey,
+                'Content-Type' => 'application/json',
+            ])->timeout(30)->post("{$baseUrl}/models/{$model}:generateContent", $body);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $content = $data['candidates'][0]['content']['parts'][0]['text'] ?? null;
+                if ($content) {
+                    return $this->stripReasoning(trim($content));
+                }
+            }
+        } else {
+            $messages = array_merge(
+                [['role' => 'system', 'content' => $systemPrompt]],
+                $history,
+                [['role' => 'user', 'content' => $message]]
+            );
+
+            $response = Http::withHeaders([
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Content-Type' => 'application/json',
+            ])->timeout(30)->post("{$baseUrl}/chat/completions", [
+                'model' => $model,
+                'messages' => $messages,
+                'max_tokens' => min($maxLength * 2, 2000),
+                'temperature' => 0.7,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                $content = $data['choices'][0]['message']['content'] ?? null;
+                if ($content) {
+                    return $this->stripReasoning(trim($content));
+                }
             }
         }
 
