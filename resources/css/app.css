@@ -1,0 +1,186 @@
+@import "./chatbot.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        @apply bg-cream text-forest-900 antialiased;
+    }
+}
+
+/* Entrance Animation System (GPU-accelerated) */
+html.js-enabled [data-gsap]:not([data-gsap="counter"]),
+html.js-enabled [data-aos] {
+    opacity: 0;
+    will-change: transform, opacity;
+    transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Translation offsets (small 12px for better CLS and premium feel) */
+html.js-enabled [data-gsap="fade-up"],
+html.js-enabled [data-aos="fade-up"] {
+    transform: translate3d(0, 12px, 0);
+}
+html.js-enabled [data-gsap="fade-down"],
+html.js-enabled [data-aos="fade-down"] {
+    transform: translate3d(0, -12px, 0);
+}
+html.js-enabled [data-gsap="fade-left"],
+html.js-enabled [data-aos="fade-left"] {
+    transform: translate3d(-12px, 0, 0);
+}
+html.js-enabled [data-gsap="fade-right"],
+html.js-enabled [data-aos="fade-right"] {
+    transform: translate3d(12px, 0, 0);
+}
+html.js-enabled [data-gsap="scale-up"],
+html.js-enabled [data-aos="scale-up"] {
+    transform: scale3d(0.98, 0.98, 1);
+}
+
+/* Animated active state */
+.animate-in {
+    opacity: 1 !important;
+    transform: translate3d(0, 0, 0) scale3d(1, 1, 1) !important;
+}
+
+/* Pure CSS Keyframe Animations for Above-the-fold content */
+@keyframes fadeInUpHero {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 16px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+@keyframes fadeInLeftHero {
+    from {
+        opacity: 0;
+        transform: translate3d(16px, 0, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.animate-hero-up {
+    opacity: 0;
+    animation: fadeInUpHero 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.animate-hero-left {
+    opacity: 0;
+    animation: fadeInLeftHero 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Hero delays */
+.hero-delay-100 {
+    animation-delay: 100ms;
+}
+.hero-delay-200 {
+    animation-delay: 200ms;
+}
+
+/* Accessibility: Respect system settings for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    html.js-enabled [data-gsap]:not([data-gsap="counter"]),
+    html.js-enabled [data-aos],
+    .animate-hero-up,
+    .animate-hero-left {
+        transition: opacity 0.25s ease !important;
+        transform: none !important;
+        animation: none !important;
+        opacity: 0;
+    }
+    
+    .animate-in,
+    .animate-hero-up,
+    .animate-hero-left {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* Premium SaaS Redesign Styling Elements */
+.bg-grid-glow {
+    background-color: #060f0c;
+    background-image: 
+        linear-gradient(to right, rgba(16, 185, 129, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
+}
+
+.text-gradient-primary {
+    background: linear-gradient(135deg, #ffffff 40%, #dda055 75%, #5f9e8d 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+@keyframes float-slow {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(0.5deg); }
+}
+
+@keyframes float-slower {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-12px) rotate(-0.5deg); }
+}
+
+.animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
+}
+
+.animate-float-slower {
+    animation: float-slower 12s ease-in-out infinite;
+}
+
+@keyframes pulse-emerald {
+    0%, 100% { transform: scale(1); opacity: 0.6; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    50% { transform: scale(1.05); opacity: 1; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+}
+
+.animate-pulse-emerald {
+    animation: pulse-emerald 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.glass-panel {
+    background: rgba(14, 36, 30, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(143, 190, 176, 0.12);
+}
+
+.glass-panel-hover {
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-panel-hover:hover {
+    transform: translateY(-4px) scale(1.01);
+    background: rgba(14, 36, 30, 0.55);
+    border-color: rgba(221, 160, 85, 0.3);
+    box-shadow: 0 12px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Custom glow element behind elements */
+.radial-glow-forest {
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+}
+
+.radial-glow-gold {
+    background: radial-gradient(circle, rgba(221, 160, 85, 0.1) 0%, transparent 70%);
+}
+
+/* ============================================
+   Surma Agro AI Chatbot (Modular CSS)
+   ============================================ */
+
+
+
+
