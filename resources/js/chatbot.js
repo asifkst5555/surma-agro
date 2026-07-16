@@ -24,6 +24,10 @@ let surmaThinkingEl = null;
 let surmaChatConfirm = null;
 let surmaPendingReset = false;
 
+// Cached DOM references
+let surmaChatBubble = null;
+let surmaChatInteractionWrapper = null;
+
 // Lottie Animation State
 let lottieLib = null;
 let chatAnimationData = null;
@@ -194,16 +198,14 @@ function surmaStopBubbleLoop() {
 }
 
 function surmaShowBubble() {
-    const bubble = document.querySelector('[data-chat-bubble]');
-    if (bubble && (!surmaChatPanel || surmaChatPanel.hidden || !surmaChatPanel.classList.contains('is-open'))) {
-        bubble.classList.add('is-visible');
+    if (surmaChatBubble && (!surmaChatPanel || surmaChatPanel.hidden || !surmaChatPanel.classList.contains('is-open'))) {
+        surmaChatBubble.classList.add('is-visible');
     }
 }
 
 function surmaHideBubble() {
-    const bubble = document.querySelector('[data-chat-bubble]');
-    if (bubble) {
-        bubble.classList.remove('is-visible');
+    if (surmaChatBubble) {
+        surmaChatBubble.classList.remove('is-visible');
     }
 }
 
@@ -211,14 +213,13 @@ function surmaHideBubble() {
  * Triggers a quick scale-bounce micro-animation on widget click.
  */
 function surmaTriggerClickBounce() {
-    const wrapper = document.getElementById('ai-chat-widget-interaction-wrapper');
-    if (wrapper) {
-        wrapper.classList.remove('is-clicked');
+    if (surmaChatInteractionWrapper) {
+        surmaChatInteractionWrapper.classList.remove('is-clicked');
         // Force reflow
-        void wrapper.offsetWidth;
-        wrapper.classList.add('is-clicked');
+        void surmaChatInteractionWrapper.offsetWidth;
+        surmaChatInteractionWrapper.classList.add('is-clicked');
         setTimeout(() => {
-            wrapper.classList.remove('is-clicked');
+            surmaChatInteractionWrapper.classList.remove('is-clicked');
         }, 400);
     }
 }
@@ -238,6 +239,49 @@ function surmaScrollToBottom() {
     if (surmaChatLog) {
         surmaChatLog.scrollTop = surmaChatLog.scrollHeight;
     }
+}
+
+let surmaViewportTicking = false;
+function surmaUpdateVisualViewport() {
+    const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    const offsetTop = window.visualViewport ? window.visualViewport.offsetTop : 0;
+    
+    if (surmaViewportTicking) return;
+    
+    surmaViewportTicking = true;
+    requestAnimationFrame(() => {
+        document.documentElement.style.setProperty('--visual-viewport-height', `${height}px`);
+        document.documentElement.style.setProperty('--visual-viewport-offsetTop', `${offsetTop}px`);
+        
+        surmaScrollToBottom();
+        surmaViewportTicking = false;
+    });
+}
+
+function surmaAdjustInputHeight() {
+    if (!surmaChatInput) return;
+    surmaChatInput.style.height = 'auto';
+    surmaChatInput.style.height = `${surmaChatInput.scrollHeight}px`;
+}
+
+function surmaAttachViewportListeners() {
+    if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', surmaUpdateVisualViewport);
+        window.visualViewport.addEventListener('scroll', surmaUpdateVisualViewport);
+    } else {
+        window.addEventListener('resize', surmaUpdateVisualViewport);
+    }
+    window.addEventListener('orientationchange', surmaUpdateVisualViewport);
+}
+
+function surmaDetachViewportListeners() {
+    if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', surmaUpdateVisualViewport);
+        window.visualViewport.removeEventListener('scroll', surmaUpdateVisualViewport);
+    } else {
+        window.removeEventListener('resize', surmaUpdateVisualViewport);
+    }
+    window.removeEventListener('orientationchange', surmaUpdateVisualViewport);
 }
 
 function surmaRemoveThinking() {
@@ -265,11 +309,22 @@ function surmaStripThinkBlocks(text) {
         .trim();
 }
 
+function surmaEscapeHtml(text) {
+    if (!text) return '';
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 function surmaAppendMessage(role, content) {
     if (!surmaChatLog || !content) return;
     const msg = document.createElement('div');
     msg.className = `surma-chat-msg ${role === 'user' ? 'user' : role === 'assistant' ? 'bot' : 'system'}`;
-    const cleaned = role !== 'user' ? surmaStripThinkBlocks(content) : content;
+    const escaped = surmaEscapeHtml(content);
+    const cleaned = role !== 'user' ? surmaStripThinkBlocks(escaped) : escaped;
     const formatted = cleaned
         .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener" class="surma-chat-link">$1</a>')
         .replace(/\n/g, '<br>');
@@ -450,6 +505,7 @@ async function surmaSubmitMessage() {
     surmaRemoveFirstMessage();
     surmaAppendMessage('user', content);
     surmaChatInput.value = '';
+    surmaAdjustInputHeight();
     surmaRemoveThinking();
     surmaAppendThinking();
     surmaSetBusy(true);
@@ -477,6 +533,9 @@ async function surmaOpenPanel() {
     // Stop and hide the speech bubble immediately when chat opens
     surmaStopBubbleLoop();
     
+    document.body.classList.add('surma-chat-open');
+    surmaAttachViewportListeners();
+    surmaUpdateVisualViewport();
     surmaChatPanel.hidden = false;
     requestAnimationFrame(() => {
         surmaChatPanel.classList.add('is-open');
@@ -488,6 +547,8 @@ async function surmaOpenPanel() {
 
 function surmaClosePanel() {
     if (!surmaChatPanel) return;
+    document.body.classList.remove('surma-chat-open');
+    surmaDetachViewportListeners();
     surmaChatPanel.classList.remove('is-open');
     if (surmaChatToggle) surmaChatToggle.setAttribute('aria-expanded', 'false');
     
@@ -526,6 +587,7 @@ function surmaMinimizePanel() {
 function surmaHandleSuggestion(text) {
     if (surmaChatInput) {
         surmaChatInput.value = text;
+        surmaAdjustInputHeight();
         surmaSubmitMessage();
     }
 }
@@ -541,6 +603,7 @@ function surmaHandleQuickAction(action) {
     const msg = map[action] || '';
     if (msg && surmaChatInput) {
         surmaChatInput.value = msg;
+        surmaAdjustInputHeight();
         surmaSubmitMessage();
     }
 }
@@ -554,6 +617,10 @@ export function initSurmaChat() {
     surmaChatForm = surmaChatPanel?.querySelector('[data-chat-form]') || null;
     surmaChatInput = surmaChatPanel?.querySelector('[data-chat-input]') || null;
     surmaChatSend = surmaChatForm?.querySelector('button[type="submit"]') || null;
+
+    // Cached DOM lookup definitions
+    surmaChatBubble = document.querySelector('[data-chat-bubble]');
+    surmaChatInteractionWrapper = document.getElementById('ai-chat-widget-interaction-wrapper');
 
     surmaConversationId = window.localStorage.getItem(SURMA_CHAT_KEY) || '';
 
@@ -576,8 +643,7 @@ export function initSurmaChat() {
     });
 
     // Clicking the speech bubble also opens the panel and stops the loop
-    const bubble = document.querySelector('[data-chat-bubble]');
-    bubble?.addEventListener('click', (e) => {
+    surmaChatBubble?.addEventListener('click', (e) => {
         e.stopPropagation();
         surmaTriggerClickBounce();
         surmaOpenPanel();
@@ -604,6 +670,10 @@ export function initSurmaChat() {
         e.preventDefault();
         surmaSubmitMessage();
     });
+
+    surmaChatInput?.addEventListener('input', surmaAdjustInputHeight);
+
+    // Viewport listeners are dynamically attached on open and detached on close to prevent memory leaks.
 
     // Event delegation for suggested question chips
     surmaChatLog?.addEventListener('click', e => {

@@ -4,7 +4,7 @@
     "name": "utils"
   },
   "node_modules/lottie-web/build/player/lottie.js": {
-    "file": "assets/lottie-DQdZhxjq.js",
+    "file": "assets/lottie-CW75kOf4.js",
     "name": "lottie",
     "src": "node_modules/lottie-web/build/player/lottie.js",
     "isDynamicEntry": true,
@@ -31,7 +31,7 @@
     ]
   },
   "resources/css/app.css": {
-    "file": "assets/app-C57x-ITQ.css",
+    "file": "assets/app-B3YdV-UF.css",
     "name": "app",
     "names": [
       "app.css"
@@ -40,7 +40,7 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-D5i8FaPt.js",
+    "file": "assets/app-5-qLcVI0.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -54,7 +54,7 @@
     ]
   },
   "resources/js/chatbot.js": {
-    "file": "assets/chatbot-BhiV1XQ5.js",
+    "file": "assets/chatbot-RYdL6l67.js",
     "name": "chatbot",
     "src": "resources/js/chatbot.js",
     "isDynamicEntry": true,

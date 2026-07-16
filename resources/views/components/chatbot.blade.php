@@ -83,7 +83,7 @@
                 </button>
             </div>
         </div>
-        <div class="surma-chat-log" data-chat-log></div>
+        <div class="surma-chat-log" data-chat-log role="log" aria-live="polite" aria-label="Chat conversation history"></div>
         <div class="surma-chat-confirm" data-chat-confirm hidden>
             <div class="surma-chat-confirm-text">Clear all messages?</div>
             <div class="surma-chat-confirm-actions">
@@ -92,10 +92,12 @@
             </div>
         </div>
         <form class="surma-chat-form" data-chat-form>
-            <input class="surma-chat-input" type="text" name="message" data-chat-input maxlength="1800" placeholder="Ask anything..." required autocomplete="off">
-            <button class="surma-chat-send" type="submit" aria-label="Send message">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            </button>
+            <div class="surma-chat-input-wrapper">
+                <textarea class="surma-chat-input" name="message" data-chat-input rows="1" maxlength="1800" placeholder="Ask anything..." required autocomplete="off" aria-label="Write a message to the AI assistant"></textarea>
+                <button class="surma-chat-send" type="submit" aria-label="Send message">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+            </div>
         </form>
     </div>
 </div>
