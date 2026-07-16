@@ -6,8 +6,8 @@
 /* Root Widget Wrapper (Stretches to bottom-right corner, allows clicking page underneath) */
 .surma-chat-widget-root {
     position: fixed;
-    right: 24px;
-    bottom: 24px;
+    right: calc(24px + env(safe-area-inset-right, 0px));
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     z-index: 99999;
     pointer-events: none;
 }
@@ -719,8 +719,8 @@ body.surma-chat-open {
 /* Tablet Media Query */
 @media (max-width: 1024px) {
     .surma-chat-widget-root {
-        right: 16px;
-        bottom: 16px;
+        right: calc(16px + env(safe-area-inset-right, 0px));
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     }
     
     #ai-chat-widget {
@@ -749,8 +749,8 @@ body.surma-chat-open {
 /* Mobile Media Query */
 @media (max-width: 640px) {
     .surma-chat-widget-root {
-        right: 16px;
-        bottom: 16px;
+        right: calc(16px + env(safe-area-inset-right, 0px));
+        bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     }
 
     #ai-chat-widget {
@@ -764,8 +764,8 @@ body.surma-chat-open {
         left: 0 !important;
         top: var(--visual-viewport-offsetTop, 0px) !important;
         bottom: auto !important;
-        width: 100vw !important;
-        max-width: 100vw !important;
+        width: 100% !important;
+        max-width: 100% !important;
         height: var(--visual-viewport-height, 100dvh) !important;
         max-height: var(--visual-viewport-height, 100dvh) !important;
         border-radius: 0 !important;

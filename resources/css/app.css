@@ -177,6 +177,36 @@ html.js-enabled [data-aos="scale-up"] {
     background: radial-gradient(circle, rgba(221, 160, 85, 0.1) 0%, transparent 70%);
 }
 
+/* Global Horizontal Overflow Prevention & Viewport Resets */
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+@layer utilities {
+    @supports (min-height: 100dvh) {
+        .min-h-screen {
+            min-height: 100dvh;
+        }
+        .h-screen {
+            height: 100dvh;
+        }
+    }
+}
+
+/* Dynamic Safe Area Padding for Mobile & Tablet viewports */
+@media (max-width: 1023px) {
+    .hero-section {
+        padding-top: calc(5rem + env(safe-area-inset-top, 0px)) !important;
+    }
+    section.pt-32 {
+        padding-top: calc(8rem + env(safe-area-inset-top, 0px)) !important;
+    }
+    section.pt-24 {
+        padding-top: calc(6rem + env(safe-area-inset-top, 0px)) !important;
+    }
+}
+
 /* ============================================
    Surma Agro AI Chatbot (Modular CSS)
    ============================================ */

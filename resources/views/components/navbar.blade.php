@@ -1,4 +1,6 @@
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-warm-gray/50 shadow-sm" x-data="{ open: false, megaOpen: null }">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-warm-gray/50 shadow-sm"
+     x-data="{ open: false, megaOpen: null }"
+     style="padding-top: env(safe-area-inset-top, 0px); padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-20">
             <a href="{{ route('home') }}" class="flex items-center space-x-3">
@@ -52,14 +54,15 @@
                     Get a Quote
                 </a>
                 <button id="mobile-menu-btn" class="lg:hidden p-2 rounded-lg hover:bg-warm-gray transition-colors" @click="open = !open">
-                    <svg class="w-6 h-6 text-forest-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    <svg class="w-6 h-6 text-forest-700 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    <svg class="w-6 h-6 text-forest-700" :class="open ? 'hidden' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    <svg class="w-6 h-6 text-forest-700" :class="open ? '' : 'hidden'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-warm-gray/50">
+    <div id="mobile-menu" class="hidden lg:hidden bg-white border-t border-warm-gray/50"
+         style="padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);">
         <div class="px-4 py-4 space-y-1">
             <a href="{{ route('home') }}" class="block px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('home') ? 'text-earth-600 bg-forest-50' : 'text-forest-700 hover:bg-forest-50' }}">Home</a>
             <a href="{{ route('about') }}" class="block px-4 py-3 text-sm font-medium rounded-xl {{ request()->routeIs('about') ? 'text-earth-600 bg-forest-50' : 'text-forest-700 hover:bg-forest-50' }}">About Us</a>

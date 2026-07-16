@@ -109,7 +109,7 @@ $schema = json_encode([
     </style>
 
     {{-- Redesigned SaaS Premium Hero Section --}}
-    <section class="relative min-h-[100dvh] flex items-center bg-[#060f0c] pt-20 lg:pt-24 pb-8 lg:pb-0 z-10 hero-section">
+    <section class="relative min-h-[100dvh] flex items-center bg-[#060f0c] pt-20 lg:pt-24 pb-8 lg:pb-0 z-10 hero-section overflow-hidden">
         {{-- Vimeo Video Background Loop (full-cover on all devices) --}}
         <div aria-hidden="true" class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none bg-[#060f0c]">
             <div aria-hidden="true" class="absolute inset-0 opacity-50 pointer-events-none select-none bg-cover bg-center"
