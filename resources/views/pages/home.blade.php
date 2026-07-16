@@ -22,8 +22,94 @@ $schema = json_encode([
 
 
 @section('content')
+    <style>
+        /* === Hero Responsive Height System ===
+           Apply only on desktop (lg+) where the hero spans full viewport.
+           Content-driven min-height, never clips. */
+        @media (min-width: 1024px) {
+            /* Default: tall monitors (≥1080px) keep the current spacious look */
+            .hero-section {
+                min-height: 100dvh;
+            }
+            /* For screens ≥1080px tall, fill exactly like before */
+            @media (min-height: 1080px) {
+                .hero-section {
+                    height: 100vh;
+                    min-height: 0;
+                }
+            }
+            /* Moderate laptop screens (800–899px tall): compact spacing */
+            @media (max-height: 899px) {
+                .hero-section {
+                    padding-top: 5rem;        /* pt-20  – was pt-24 (6rem) */
+                }
+                .hero-section .hero-heading {
+                    font-size: clamp(1.75rem, 3.5vw, 2.5rem);  /* ~text-4xl on small */
+                    line-height: 1.2;
+                }
+                .hero-section .hero-subtitle {
+                    font-size: 0.875rem;       /* text-sm  – was text-lg */
+                    line-height: 1.5;
+                }
+                .hero-section .hero-left-gap > :not([hidden]) ~ :not([hidden]) {
+                    margin-top: 1.5rem;         /* space-y-6 – was space-y-8 */
+                }
+                .hero-section .hero-v-gap {
+                    gap: 2rem;                  /* gap-8    – was gap-12 */
+                }
+                .hero-section .hero-card {
+                    padding: 1rem;              /* p-4      – was p-5 */
+                }
+                .hero-section .hero-right-gap > :not([hidden]) ~ :not([hidden]) {
+                    margin-top: 1rem;            /* space-y-4 – was space-y-6 */
+                }
+                .hero-section .hero-card-gap > :not([hidden]) ~ :not([hidden]) {
+                    margin-top: 0.5rem;          /* space-y-2 – was space-y-3 */
+                }
+                .hero-section .hero-trust {
+                    padding-top: 1rem;           /* pt-4     – was pt-6 */
+                }
+                .hero-section .hero-trust-gap {
+                    gap: 1rem;                   /* gap-x-4  – was gap-x-8 */
+                }
+            }
+            /* Very short laptop screens (≤799px tall): aggressive compactness */
+            @media (max-height: 799px) {
+                .hero-section {
+                    padding-top: 4rem;           /* pt-16    – was pt-24 */
+                }
+                .hero-section .hero-heading {
+                    font-size: clamp(1.5rem, 3vw, 2rem);   /* ~text-3xl */
+                }
+                .hero-section .hero-subtitle {
+                    font-size: 0.75rem;          /* text-xs */
+                    line-height: 1.4;
+                }
+                .hero-section .hero-left-gap > :not([hidden]) ~ :not([hidden]) {
+                    margin-top: 1rem;             /* space-y-4 */
+                }
+                .hero-section .hero-card {
+                    padding: 0.75rem;            /* p-3 */
+                }
+                .hero-section .hero-card-gap > :not([hidden]) ~ :not([hidden]) {
+                    margin-top: 0.25rem;          /* space-y-1 */
+                }
+                .hero-section .hero-btn {
+                    padding: 0.625rem 1.25rem;   /* ~px-5 py-2.5 */
+                    font-size: 0.8125rem;
+                }
+                .hero-section .hero-card-title {
+                    font-size: 0.9375rem;        /* ~text-[15px] */
+                }
+                .hero-section .hero-card-text {
+                    font-size: 0.6875rem;        /* ~text-[11px] */
+                }
+            }
+        }
+    </style>
+
     {{-- Redesigned SaaS Premium Hero Section --}}
-    <section class="relative min-h-screen lg:h-screen lg:min-h-[700px] flex items-center overflow-hidden bg-[#060f0c] pt-20 lg:pt-24 pb-8 lg:pb-0 z-10">
+    <section class="relative min-h-[100dvh] flex items-center bg-[#060f0c] pt-20 lg:pt-24 pb-8 lg:pb-0 z-10 hero-section">
         {{-- Vimeo Video Background Loop (full-cover on all devices) --}}
         <div aria-hidden="true" class="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none bg-[#060f0c]">
             <div aria-hidden="true" class="absolute inset-0 opacity-50 pointer-events-none select-none bg-cover bg-center"
@@ -48,9 +134,9 @@ $schema = json_encode([
         <div class="absolute top-1/2 left-1/3 w-80 h-80 radial-glow-forest pointer-events-none opacity-40 z-10"></div>
 
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-0 w-full flex flex-col justify-center h-full">
-            <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 hero-v-gap items-center">
                 {{-- Left Column: Headline, Subtitle, CTAs & Social Proof --}}
-                <div class="lg:col-span-6 space-y-6 lg:space-y-8 animate-hero-up text-center lg:text-left">
+                <div class="lg:col-span-6 space-y-6 lg:space-y-8 hero-left-gap animate-hero-up text-center lg:text-left">
                     <div>
                         {{-- Verified supply chain pill --}}
                         <span class="inline-flex items-center gap-2 px-3 py-1 bg-forest-900/80 border border-emerald-500/20 text-emerald-300 text-[11px] lg:text-xs font-semibold rounded-full mb-4 lg:mb-6 backdrop-blur-md shadow-sm mx-auto lg:mx-0">
@@ -59,32 +145,32 @@ $schema = json_encode([
                         </span>
                         
                         {{-- SaaS Bold Heading --}}
-                        <h1 class="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-white leading-[1.15] mb-4 lg:mb-6">
+                        <h1 class="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold tracking-tight text-white leading-[1.15] mb-4 lg:mb-6 hero-heading">
                             Premium Agro, <br>
                             <span class="text-[#D4883A]">Globally</span> Connected
                         </h1>
                         
                         {{-- High-Converting Copy --}}
-                        <p class="text-sm sm:text-base lg:text-lg text-forest-200/85 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                        <p class="text-sm sm:text-base lg:text-lg text-forest-200/85 leading-relaxed max-w-xl mx-auto lg:mx-0 hero-subtitle">
                             Accelerate your international sourcing with our audited producers, end-to-end global cold chains, and real-time compliance automation. From origin to port, guaranteed.
                         </p>
                     </div>
 
                     {{-- Staggered CTAs --}}
                     <div class="flex flex-col sm:flex-row gap-3 lg:gap-4 justify-center lg:justify-start">
-                        <a href="{{ route('catalog.index') }}" class="group relative inline-flex items-center justify-center px-6 lg:px-8 py-3.5 lg:py-4 bg-earth-600 hover:bg-earth-500 text-white text-sm lg:text-base font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-earth-600/20 hover:shadow-earth-600/35 hover:-translate-y-0.5 overflow-hidden">
+                        <a href="{{ route('catalog.index') }}" class="group relative inline-flex items-center justify-center px-6 lg:px-8 py-3.5 lg:py-4 hero-btn bg-earth-600 hover:bg-earth-500 text-white text-sm lg:text-base font-semibold rounded-xl transition-all duration-300 shadow-lg shadow-earth-600/20 hover:shadow-earth-600/35 hover:-translate-y-0.5 overflow-hidden">
                             <span>Explore Products</span>
                             <svg class="w-4 h-4 lg:w-5 lg:h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                             </svg>
                         </a>
-                        <a href="{{ route('contact') }}" class="group inline-flex items-center justify-center px-6 lg:px-8 py-3.5 lg:py-4 bg-white/5 hover:bg-white/10 text-white text-sm lg:text-base font-semibold rounded-xl transition-all duration-300 border border-white/10 hover:border-white/20 hover:-translate-y-0.5">
+                        <a href="{{ route('contact') }}" class="group inline-flex items-center justify-center px-6 lg:px-8 py-3.5 lg:py-4 hero-btn bg-white/5 hover:bg-white/10 text-white text-sm lg:text-base font-semibold rounded-xl transition-all duration-300 border border-white/10 hover:border-white/20 hover:-translate-y-0.5">
                             Get a Quote
                         </a>
                     </div>
 
                     {{-- Trust Indicators / Certifications --}}
-                    <div class="pt-6 border-t border-white/5 flex flex-wrap items-center justify-center lg:justify-start gap-y-3 gap-x-6 lg:gap-x-8 text-forest-200/60 text-[10px] lg:text-xs tracking-wider uppercase font-semibold">
+                    <div class="pt-6 border-t border-white/5 flex flex-wrap items-center justify-center lg:justify-start gap-y-3 gap-x-6 lg:gap-x-8 text-forest-200/60 text-[10px] lg:text-xs tracking-wider uppercase font-semibold hero-trust hero-trust-gap">
                         <div class="flex items-center gap-1.5">
                             <span class="text-earth-400 text-sm">★★★★★</span>
                             <span class="text-white">4.9 RATING</span>
@@ -102,7 +188,7 @@ $schema = json_encode([
                 </div>
 
                 {{-- Right Column: Typographic Services Directory --}}
-                <div class="lg:col-span-6 space-y-4 lg:space-y-6 animate-hero-left hero-delay-200">
+                <div class="lg:col-span-6 space-y-4 lg:space-y-6 hero-right-gap animate-hero-left hero-delay-200">
                     <div class="flex flex-col gap-4 lg:gap-5 max-w-lg mx-auto w-full">
                         
                         {{-- Header text --}}
@@ -112,15 +198,15 @@ $schema = json_encode([
                         </div>
 
                         {{-- Service 1: Premium Agro Catalog --}}
-                        <a href="{{ route('catalog.index') }}" class="group block glass-panel rounded-2xl p-4 lg:p-5 hover:bg-white/[0.04] transition-all duration-300 border border-white/10 hover:border-earth-500/35 relative overflow-hidden">
+                        <a href="{{ route('catalog.index') }}" class="group block glass-panel rounded-2xl p-4 lg:p-5 hero-card hover:bg-white/[0.04] transition-all duration-300 border border-white/10 hover:border-earth-500/35 relative overflow-hidden">
                             <div class="absolute right-4 top-4 text-white/5 group-hover:text-earth-500/10 text-4xl lg:text-5xl font-bold font-mono transition-colors duration-300">01</div>
-                            <div class="space-y-2 lg:space-y-3">
+                            <div class="space-y-2 lg:space-y-3 hero-card-gap">
                                 <span class="text-earth-400 text-[9px] lg:text-[10px] uppercase font-bold tracking-widest block">Agricultural Commodities &amp; Food</span>
-                                <h3 class="text-white text-base lg:text-lg font-bold tracking-tight group-hover:text-earth-300 transition-colors flex items-center gap-1.5">
+                                <h3 class="text-white text-base lg:text-lg font-bold tracking-tight group-hover:text-earth-300 transition-colors flex items-center gap-1.5 hero-card-title">
                                     Agro-Industrial Export Catalog
                                     <svg class="w-3.5 h-3.5 lg:w-4 lg:h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                 </h3>
-                                <p class="text-forest-200/60 text-[11px] lg:text-xs leading-relaxed max-w-sm">
+                                <p class="text-forest-200/60 text-[11px] lg:text-xs leading-relaxed max-w-sm hero-card-text">
                                     Sourcing premium non-basmati rice, value-added processed food products, and traditional agricultural items under strict quality standards.
                                 </p>
                                 <div class="flex flex-wrap gap-1.5 pt-0.5 text-[9px] lg:text-[10px] text-forest-200/50">
@@ -132,15 +218,15 @@ $schema = json_encode([
                         </a>
 
                         {{-- Service 2: Surma Fish --}}
-                        <a href="{{ route('surma-fish') }}" class="group block glass-panel rounded-2xl p-4 lg:p-5 hover:bg-white/[0.04] transition-all duration-300 border border-white/10 hover:border-earth-500/35 relative overflow-hidden">
+                        <a href="{{ route('surma-fish') }}" class="group block glass-panel rounded-2xl p-4 lg:p-5 hero-card hover:bg-white/[0.04] transition-all duration-300 border border-white/10 hover:border-earth-500/35 relative overflow-hidden">
                             <div class="absolute right-4 top-4 text-white/5 group-hover:text-earth-500/10 text-4xl lg:text-5xl font-bold font-mono transition-colors duration-300">02</div>
-                            <div class="space-y-2 lg:space-y-3">
+                            <div class="space-y-2 lg:space-y-3 hero-card-gap">
                                 <span class="text-emerald-400 text-[9px] lg:text-[10px] uppercase font-bold tracking-widest block">Seafood Division</span>
-                                <h3 class="text-white text-base lg:text-lg font-bold tracking-tight group-hover:text-emerald-300 transition-colors flex items-center gap-1.5">
+                                <h3 class="text-white text-base lg:text-lg font-bold tracking-tight group-hover:text-emerald-300 transition-colors flex items-center gap-1.5 hero-card-title">
                                     Surma Fish Export
                                     <svg class="w-3.5 h-3.5 lg:w-4 lg:h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                 </h3>
-                                <p class="text-forest-200/60 text-[11px] lg:text-xs leading-relaxed max-w-sm">
+                                <p class="text-forest-200/60 text-[11px] lg:text-xs leading-relaxed max-w-sm hero-card-text">
                                     Premium processing, quick-freeze IQF technology, and global cold-chain shipping for high-grade ocean and freshwater seafood.
                                 </p>
                                 <div class="flex flex-wrap gap-1.5 pt-0.5 text-[9px] lg:text-[10px] text-forest-200/50">
@@ -152,15 +238,15 @@ $schema = json_encode([
                         </a>
 
                         {{-- Service 3: Change Box Services --}}
-                        <a href="{{ route('change-box') }}" class="group block glass-panel rounded-2xl p-4 lg:p-5 hover:bg-white/[0.04] transition-all duration-300 border border-white/10 hover:border-earth-500/35 relative overflow-hidden">
+                        <a href="{{ route('change-box') }}" class="group block glass-panel rounded-2xl p-4 lg:p-5 hero-card hover:bg-white/[0.04] transition-all duration-300 border border-white/10 hover:border-earth-500/35 relative overflow-hidden">
                             <div class="absolute right-4 top-4 text-white/5 group-hover:text-earth-500/10 text-4xl lg:text-5xl font-bold font-mono transition-colors duration-300">03</div>
-                            <div class="space-y-2 lg:space-y-3">
+                            <div class="space-y-2 lg:space-y-3 hero-card-gap">
                                 <span class="text-earth-400 text-[9px] lg:text-[10px] uppercase font-bold tracking-widest block">Business &amp; Logistics Hub</span>
-                                <h3 class="text-white text-base lg:text-lg font-bold tracking-tight group-hover:text-earth-300 transition-colors flex items-center gap-1.5">
+                                <h3 class="text-white text-base lg:text-lg font-bold tracking-tight group-hover:text-earth-300 transition-colors flex items-center gap-1.5 hero-card-title">
                                     Change Box Services
                                     <svg class="w-3.5 h-3.5 lg:w-4 lg:h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                                 </h3>
-                                <p class="text-forest-200/60 text-[11px] lg:text-xs leading-relaxed max-w-sm">
+                                <p class="text-forest-200/60 text-[11px] lg:text-xs leading-relaxed max-w-sm hero-card-text">
                                     End-to-end B2B company incorporation, trade logistics, corporate travel management, and global supply chain compliance.
                                 </p>
                                 <div class="flex flex-wrap gap-1.5 pt-0.5 text-[9px] lg:text-[10px] text-forest-200/50">
