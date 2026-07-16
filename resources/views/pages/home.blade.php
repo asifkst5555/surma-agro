@@ -304,10 +304,6 @@ $schema = json_encode([
                             <p class="text-forest-600 text-sm">Global network spanning 30+ countries</p>
                         </div>
                     </div>
-                    <a href="{{ route('about') }}" class="inline-flex items-center mt-8 px-6 py-3 bg-forest-700 text-white font-semibold rounded-xl hover:bg-forest-600 transition-all mx-auto lg:mx-0">
-                        Learn More About Us
-                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                    </a>
                 </div>
                 <div class="relative" data-gsap="fade-left">
                     <div class="aspect-[4/3] bg-gradient-to-br from-forest-100 to-forest-50 rounded-3xl overflow-hidden">
