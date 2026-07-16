@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title', $blog->title . ' - Surma Agro Blog')
 @section('meta_description', $blog->excerpt)
+@section('og_image', $blog->image ?: '')
 @php $articleSchema = json_encode(['@context'=>'https://schema.org','@type'=>'Article','headline'=>$blog->title,'description'=>$blog->excerpt,'author'=>['@type'=>'Person','name'=>$blog->author??'Surma Agro'],'datePublished'=>$blog->published_at?->toIso8601String(),'image'=>$blog->image,], JSON_UNESCAPED_SLASHES); @endphp
 @push('schema')
 <script type="application/ld+json">{!! $articleSchema !!}</script>

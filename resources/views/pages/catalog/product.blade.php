@@ -2,6 +2,7 @@
 
 @section('title', $product->name . ' - Surma Agro')
 @section('meta_description', $product->short_description ?? 'Premium ' . $product->name . ' available for B2B export from Surma Agro.')
+@section('og_image', $product->featured_image ? (Str::startsWith($product->featured_image, 'http') ? $product->featured_image : asset('storage/' . $product->featured_image)) : '')
 
 @push('schema')
 <script type="application/ld+json">
